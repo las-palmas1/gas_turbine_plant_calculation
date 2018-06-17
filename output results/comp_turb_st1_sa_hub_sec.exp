@@ -1,12 +1,12 @@
-[degrees]angle1_l_sa0=89.9705229914
-[degrees]angle2_l_sa0=14.0648516232
+[degrees]angle1_l_sa0=89.9705220478
+[degrees]angle2_l_sa0=14.0770452084
 [degrees]gamma1_s_sa0=20.4
 [degrees]gamma1_k_sa0=3.6
 [degrees]gamma2_s_sa0=4.25
 [degrees]gamma2_k_sa0=0.75
-[mm]r1_sa0=2.62363398917
+[mm]r1_sa0=2.66729810455
 [mm]s2_sa0=0.9
-[mm]b_a_sa0=37.4804855595
-[mm]t_sa0=38.5538303491
+[mm]b_a_sa0=38.1042586364
+[mm]t_sa0=38.6240875376
 central_pole_pos_sa0=0.75
 z_sa0=51
