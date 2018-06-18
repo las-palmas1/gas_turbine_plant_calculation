@@ -2,18 +2,27 @@ import gas_turbine_cycle.templates
 from gas_turbine_cycle.core.turbine_lib import Turbine, Atmosphere, Load, Compressor, CombustionChamber, Inlet, \
     Outlet, Source, Sink
 import turbine.templates as turb_templ
+import compressor.templates as comp_templ
 from jinja2 import Environment, select_autoescape, FileSystemLoader
 import os
+import config
+from compressor.average_streamline.compressor import Compressor as CompAvLine
 from turbine.cooling.film_defl import FilmBladeCoolingResults
 from turbine.profiling.stage import ProfilingResultsForCooling
-from turbine.average_streamline.turbine import Turbine
+from turbine.average_streamline.turbine import Turbine as TurbAvLine
 import pickle
 
 
-def get_turbine(fname) -> Turbine:
+def get_turbine(fname) -> TurbAvLine:
     file = open(fname, 'rb')
-    res = pickle.load(file)
+    res = pickle.load(file)['turbine']
     file.close()
+    return res
+
+
+def get_compressor(fname) -> CompAvLine:
+    with open(fname, 'rb') as f:
+        res = pickle.load(f)[0]
     return res
 
 
@@ -38,11 +47,14 @@ def load(fname):
     return res
 
 
+root_dir = os.path.dirname(os.path.dirname(__file__))
+
 if __name__ == '__main__':
     loader = FileSystemLoader(
         [
             gas_turbine_cycle.templates.__path__[0], os.getcwd(),
             turb_templ.__path__[0],
+            comp_templ.__path__[0],
             os.getcwd()
         ]
     )
@@ -58,7 +70,14 @@ if __name__ == '__main__':
         comment_end_string='#>'
     )
 
-    with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'output results/cycle.cyc'), 'rb') as file:
+    comp_avline = get_compressor(os.path.join(root_dir, config.output_dirname, 'compressor.comp'))
+    comp_turb_avline = get_turbine(os.path.join(root_dir, config.output_dirname, 'comp_turbine_ave_line.avl'))
+    comp_turb_st1_params = load(os.path.join(root_dir, config.output_dirname, 'comp_turb_st1_flow_params'))
+    comp_turb_st2_params = load(os.path.join(root_dir, config.output_dirname, 'comp_turb_st2_flow_params'))
+    power_turb_avline = get_turbine(os.path.join(root_dir, config.output_dirname, 'power_turbine_ave_line.avl'))
+
+    with open(os.path.join(root_dir, config.output_dirname,
+                           config.cycle_results), 'rb') as file:
         results = pickle.load(file)
 
     units = results[0]
@@ -124,41 +143,49 @@ if __name__ == '__main__':
         k_nat_gas_av=k_nat_gas_av,
         eta_ad_gas_comp=eta_ad_gas_comp,
         eta_el_eng=eta_el_eng,
-        name_gas_comp=name_gas_comp
+        name_gas_comp=name_gas_comp,
+
+        comp_avline=comp_avline,
+
+        comp_turb_avline=comp_turb_avline,
+        comp_turb_st1_params=comp_turb_st1_params,
+        comp_turb_st2_params=comp_turb_st2_params,
+
+        power_turb_avline=power_turb_avline,
     )
 
     with open('report.tex', 'w', encoding='utf-8') as file:
         file.write(content)
 
-    practice_template = env.get_template('practice_report_template.tex')
-
-    content = practice_template.render(
-        atm=atmosphere,
-        inlet=inlet,
-        comp=compressor,
-        sink=sink,
-        comb_chamber=comb_chamber,
-        turb_c=comp_turbine,
-        source=source,
-        turb_p=power_turbine,
-        outlet=outlet,
-        load=turb_load,
-        N_gen=N_gen,
-        eta_gen=eta_gen,
-        name_gen=name_gen,
-        N_gas_comp=N_gas_comp,
-        mass_rate_gas_comp=mass_rate_gas_comp,
-        press_in_gas_comp=press_in_gas_comp,
-        press_out_gas_comp=press_out_gas_comp,
-        T_in_gas_comp=T_in_gas_comp,
-        T_out_gas_comp=T_out_gas_comp,
-        rho_gas_comp=rho_gas_comp,
-        c_p_nat_gas_av=c_p_nat_gas_av,
-        k_nat_gas_av=k_nat_gas_av,
-        eta_ad_gas_comp=eta_ad_gas_comp,
-        eta_el_eng=eta_el_eng,
-        name_gas_comp=name_gas_comp
-    )
-
-    with open('practice_report.tex', 'w', encoding='utf-8') as file:
-        file.write(content)
+    # practice_template = env.get_template('practice_report_template.tex')
+    #
+    # content = practice_template.render(
+    #     atm=atmosphere,
+    #     inlet=inlet,
+    #     comp=compressor,
+    #     sink=sink,
+    #     comb_chamber=comb_chamber,
+    #     turb_c=comp_turbine,
+    #     source=source,
+    #     turb_p=power_turbine,
+    #     outlet=outlet,
+    #     load=turb_load,
+    #     N_gen=N_gen,
+    #     eta_gen=eta_gen,
+    #     name_gen=name_gen,
+    #     N_gas_comp=N_gas_comp,
+    #     mass_rate_gas_comp=mass_rate_gas_comp,
+    #     press_in_gas_comp=press_in_gas_comp,
+    #     press_out_gas_comp=press_out_gas_comp,
+    #     T_in_gas_comp=T_in_gas_comp,
+    #     T_out_gas_comp=T_out_gas_comp,
+    #     rho_gas_comp=rho_gas_comp,
+    #     c_p_nat_gas_av=c_p_nat_gas_av,
+    #     k_nat_gas_av=k_nat_gas_av,
+    #     eta_ad_gas_comp=eta_ad_gas_comp,
+    #     eta_el_eng=eta_el_eng,
+    #     name_gas_comp=name_gas_comp
+    # )
+    #
+    # with open('practice_report.tex', 'w', encoding='utf-8') as file:
+    #     file.write(content)

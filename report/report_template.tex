@@ -69,9 +69,10 @@
 
 %	</ import '2N.tex' as TwoN />
 %   </ import 'equipment.tex' as Equip/>
-%   </ import 'average_streamline.tex' as avline />
-%   </ import 'profiling.tex' as prof />
-%   </ import 'cooling.tex' as cool />
+%   </ import 'turb_average_streamline.tex' as turb_avline_temp />
+%   </ import 'comp_average_streamline.tex' as comp_avline_temp />
+%   </ import 'turb_profiling.tex' as turb_prof_temp />
+%   </ import 'turb_cooling.tex' as turb_cool_temp />
 
     \section{ВВЕДЕНИЕ}
     Газотурбинные имееют достаточно широкое примение в энергетике в качестве привода электрогенератора.
@@ -417,16 +418,58 @@
 %    << Equip.gas_compressor_params(N_gen, N_gas_comp, mass_rate_gas_comp, press_in_gas_comp, press_out_gas_comp, T_in_gas_comp, T_out_gas_comp, rho_gas_comp, c_p_nat_gas_av, k_nat_gas_av, eta_ad_gas_comp, eta_el_eng, name_gas_comp) >>
 
     \subsection{Расчет компрессора.}
-    \subsubsection{Поступенчатый расчет по средней линии тока.}
-    \subsubsection{Профилирование лопаточного аппарата.}
-    \subsection{Расчет камеры сгорания.}
+    В данном разделе будут приведены результаты поступенчатого расчета компрессора проектируемой установки
+    по средней линии тока и пример расчета для первой ступени, так как расчет каждой ступени совершается
+    по одинаковой методике.
+    Расчет произведен по методике изложенной в ~\cite{beknev_comp}.
+    \subsubsection{Результаты поступенчатого расчета.}
+%    << comp_avline_temp.stage_tables(comp_avline) >>
+    \subsubsection{Исходные данные для расчета первой ступени.}
+%    << comp_avline_temp.stage_init_data(comp_avline[0]) >>
+    \subsubsection{Расчет первой ступени.}
+%    << comp_avline_temp.stage(comp_avline[0]) >>
+
     \subsection{Расчет турбины компрессора.}
-    \subsubsection{Поступенчатый расчет.}
-    \subsubsection{Профилирование лопаточного аппарата.}
+    В данном разделе представлен поступенчатый газодинамический расчет турбины компрессора по средней линии тока.
+    Также описана методика расчета параметров потока по высоте ступени и представлены результаты расчета параметров
+    потока по высоте для обоих ступеней турбины.
+    Расчет выполнен по методике, изложенной в ~\cite{molyakov1} и ~\cite{molyakov2}
+    \subsubsection{Результаты поступенчатого расчета.}
+%    << turb_avline_temp.stage_tables(comp_turb_avline) >>
+    \subsubsection{Исходные данные для расчета первой ступени.}
+%    << turb_avline_temp.stage_init_data(comp_turb_avline[0], 'heat_drop') >>
+    \subsubsection{Расчет первой ступени.}
+%    << turb_avline_temp.heat_drop_stage(comp_turb_avline[0]) >>
+    \subsubsection{Исходные данные для расчета второй ступени.}
+%    << turb_avline_temp.stage_init_data(comp_turb_avline[1], 'work') >>
+    \subsubsection{Расчет второй ступени.}
+%    << turb_avline_temp.work_stage(comp_turb_avline[1]) >>
+    \subsubsection{Расчет интегральных параметров турбины.}
+%     </ set L_t_sum_exp = ((comp_turb_avline[0].L_t_prime / 10**6) | round(4)).__str__() + '\cdot 10^6' + '+' + ((comp_turb_avline[1].L_t_prime / 10**6) | round(4)).__str__() + '\cdot 10^6' />
+%    << turb_avline_temp.integrate_turbine_param(comp_turb_avline, L_t_sum_exp) >>
+    \subsubsection{Расчет параметров потока по высоте.}
+%    << turb_prof_temp.rad_dist_alg() >>
+%    << turb_prof_temp.rad_dist_res(comp_turb_st1_params, 'Параметры первой ступени на различных радиусах.', 'const_angle') >>
+%    << turb_prof_temp.rad_dist_res(comp_turb_st2_params, 'Параметры второй ступени на различных радиусах.', 'const_angle') >>
+
     \subsection{Расчет силовой турбины.}
-    \subsubsection{Поступенчатый расчет.}
-    \subsubsection{Профилирование лопаточного аппарата.}
-    \subsection{Прочностные расчеты.}
+    В данном разделе представлен поступенчатый газодинамический расчет силовой турбины по средней линии тока.
+    Расчет выполнен по методике, изложенной в ~\cite{molyakov1} и ~\cite{molyakov2}
+    \subsubsection{Результаты поступенчатого расчета.}
+%    << turb_avline_temp.stage_tables(power_turb_avline) >>
+    \subsubsection{Исходные данные для расчета первой ступени.}
+%    << turb_avline_temp.stage_init_data(power_turb_avline[0], 'heat_drop') >>
+    \subsubsection{Расчет первой ступени.}
+%    << turb_avline_temp.heat_drop_stage(power_turb_avline[0]) >>
+    \subsubsection{Исходные данные для расчета второй ступени.}
+%    << turb_avline_temp.stage_init_data(power_turb_avline[1], 'work') >>
+    \subsubsection{Расчет второй ступени.}
+%    << turb_avline_temp.work_stage(power_turb_avline[1]) >>
+    \subsubsection{Расчет интегральных параметров турбины.}
+%     </ set L_t_sum_exp = ((power_turb_avline[0].L_t_prime / 10**6) | round(4)).__str__() + '\cdot 10^6' + '+' + ((power_turb_avline[1].L_t_prime / 10**6) | round(4)).__str__() + '\cdot 10^6' />
+%    << turb_avline_temp.integrate_turbine_param(power_turb_avline, L_t_sum_exp) >>
+
+    \subsection{Расчет камеры сгорания.}
 
     \section{Научно-исследовательская часть.}
     \subsection{Конструкция системы охлаждения лопатки СА первой ступени турбины компрессора.}
@@ -481,6 +524,21 @@
 %        Теория и проектирование газотурбинных и комбинированных установок: учебник для вузов /
 %        Ю.С. Елисеев, Э.А. Манушин, В.Е. Михальцев и др. - 2-е изд., перераб. и доп. - М.:
 %        Изд-во МГТУ им. Н.Э. Баумана, 2000 - 640 с.
+
+        \bibitem{beknev_comp}
+%        Расчет осевого компрессора. Методические указания по выполнению курсовых и дипломных проектов /
+%        В.С. Бекнев - М.:
+%        Изд-во МГТУ им. Н.Э. Баумана, 1981 - 37 с.
+
+        \bibitem{molyakov1}
+%        Теория и проектирование газовой турбины: Учеб. пособие по курсу «Лопаточные машины газотурбинных и
+%        комбинированных установок. Газовые турбины». - Ч. 1: Теория и проектирование ступени газовой турбины /
+%        Под ред. М.И. Осипова. - М.: Изд-во МГТУ им. Н.Э. Баумана. 2006. - 104 с.: ил.
+
+        \bibitem{molyakov2}
+%        Теория и проектирование газовой турбины: Учеб. пособие по курсу «Лопаточные машины газотурбинных и
+%        комбинированных установок. Газовые турбины». - Ч. 2: Теория и проектирование многоступенчатой газовой турбины /
+%        Под ред. М.И. Осипова. - М.: Изд-во МГТУ им. Н.Э. Баумана. 2008. - 116 с.: ил.
 
     \end{thebibliography}
 
