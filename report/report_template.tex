@@ -73,6 +73,8 @@
 %   </ import 'comp_average_streamline.tex' as comp_avline_temp />
 %   </ import 'turb_profiling.tex' as turb_prof_temp />
 %   </ import 'turb_cooling.tex' as turb_cool_temp />
+%   </ import 'comb_geom.tex' as comb_geom_templ/>
+
 
     \section{ВВЕДЕНИЕ}
     Газотурбинные имееют достаточно широкое примение в энергетике в качестве привода электрогенератора.
@@ -471,9 +473,28 @@
 
     \subsection{Расчет камеры сгорания.}
 
+    \subsubsection{Исходные данные.}
+%    << comb_geom_templ.init_data(comb_geom) >>
+    \subsubsection{Расчет.}
+%    << comb_geom_templ.calc(comb_geom) >>
+
     \section{Научно-исследовательская часть.}
-    \subsection{Конструкция системы охлаждения лопатки СА первой ступени турбины компрессора.}
     \subsection{Расчет конвективно-пленочной системы охлаждения СА первой ступени турбины компрессора.}
+    \subsubsection{Описание алгоритма расчета температурного поля лопатки.}
+%    << turb_cool_temp.description() >>
+    \subsubsection{Методика расчета пленки.}
+%    << turb_cool_temp.film() >>
+    \subsubsection{Методика расчета температуры охлаждающего воздуха.}
+%    << turb_cool_temp.air_temp() >>
+    \subsubsection{Методика расчета температуры стенки.}
+%    << turb_cool_temp.wall_temp() >>
+    \subsubsection{Результаты расчета для наиболее горячего сектора.}
+%    << turb_cool_temp.sector_params(cool_film_params, caption='Значения параметров в отверстиях.') >>
+%    << turb_cool_temp.sector_params(cool_local_params, caption='Значения локальных параметров.') >>
+    \subsubsection{Интегральные параметры охлаждения.}
+%    << turb_cool_temp.integrate_params(cool_results, comp_turb_st1_sa_blade_num, comp_avline.G) >>
+
+
     \subsection{Расчет переменных режимов работы установки.}
 
     \section{Технологическая часть.}

@@ -11,12 +11,20 @@ from turbine.cooling.film_defl import FilmBladeCoolingResults
 from turbine.profiling.stage import ProfilingResultsForCooling
 from turbine.average_streamline.turbine import Turbine as TurbAvLine
 import pickle
+import comb_chamber.templates as comb_templ
+from comb_chamber.geom import CombustionChamberGeom
 
 
 def get_turbine(fname) -> TurbAvLine:
     file = open(fname, 'rb')
     res = pickle.load(file)['turbine']
     file.close()
+    return res
+
+
+def get_comb_chamber_geom(fname) -> CombustionChamberGeom:
+    with open(fname, 'rb') as f:
+        res = pickle.load(f)
     return res
 
 
@@ -55,6 +63,7 @@ if __name__ == '__main__':
             gas_turbine_cycle.templates.__path__[0], os.getcwd(),
             turb_templ.__path__[0],
             comp_templ.__path__[0],
+            comb_templ.__path__[0],
             os.getcwd()
         ]
     )
@@ -75,6 +84,11 @@ if __name__ == '__main__':
     comp_turb_st1_params = load(os.path.join(root_dir, config.output_dirname, 'comp_turb_st1_flow_params'))
     comp_turb_st2_params = load(os.path.join(root_dir, config.output_dirname, 'comp_turb_st2_flow_params'))
     power_turb_avline = get_turbine(os.path.join(root_dir, config.output_dirname, 'power_turbine_ave_line.avl'))
+    comb_chamber_geom = get_comb_chamber_geom(os.path.join(root_dir, config.output_dirname, 'comb_chamber_geom.cchg'))
+    cool_results = get_cooling_results(os.path.join(root_dir, config.output_dirname, 'cool_results'))
+    prof_res_for_cool = get_profiling_results(os.path.join(root_dir, config.output_dirname,
+                                                           'comp_turb_st1_prof_for_cool.prof'))
+    hot_sector_num = 4
 
     with open(os.path.join(root_dir, config.output_dirname,
                            config.cycle_results), 'rb') as file:
@@ -152,6 +166,13 @@ if __name__ == '__main__':
         comp_turb_st2_params=comp_turb_st2_params,
 
         power_turb_avline=power_turb_avline,
+
+        comb_geom=comb_chamber_geom,
+
+        cool_film_params=cool_results.film_params[hot_sector_num],
+        cool_local_params=cool_results.local_params[hot_sector_num],
+        cool_results=cool_results,
+        comp_turb_st1_sa_blade_num=prof_res_for_cool.blade_num
     )
 
     with open('report.tex', 'w', encoding='utf-8') as file:
